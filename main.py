@@ -1,54 +1,46 @@
 # Программа попытается угадать число загаданное вами от 1 до 100
-# Версия 1.0 (без GUI)
+# версия 2.0 (c GUI)
 #==============================================
-# Подключение генератора чисел
+# подключение генератора чисел и GUI
 import random
-
+import easygui
 # сколняем окончание попыток
 def sklonenie():
- global count
- if count == 1:
-     count = str(count) + " попытку!"
- elif 1 < count < 5:
-     count = str(count) + " попытки!"
- else:
-     count = str(count) + " попыток!"
- return count
+    global count
+    if count == 1:
+        count = str(count) + " попытку!"
+    elif 1 < count < 5:
+        count = str(count) + " попытки!"
+    else:
+        count = str(count) + " попыток!"
+    return count
 
-input('''Здравствуйте! сейчас вам необходимо загадать число от 1 до 100,
-как только будите готовы нажмите кнопку "Enter"''')
+easygui.msgbox("""\t\tЗдравствуйте!\n\
+Сейчас вам необходимо загадать число от 1 до 100\n\
+            Как только будите готовы нажмите кнопку""", ok_button="Я готов(а)!", image="sushi15.png")
 count = 1
 predpolozenie, predpolozenie2 = 1, 100
 number = random.randint(predpolozenie, predpolozenie2)
-vernost = ""
-print("Я предпологаю, что вы загадали число:", number)
-
-while True:
- try:
-     vernost = str(input("число верно?\n"))
-     if not vernost:
-         continue
-     elif vernost == "да" or vernost == "верно":
-         break
-     bolshe_or_not = ""
-     count += 1
-     while bolshe_or_not != "больше" or bolshe_or_not != "меньше":
-             bolshe_or_not = str(input("Число больше или меньше загаданного?\n"))
-             if bolshe_or_not == "больше":
-                 predpolozenie2 = number - 1
-             elif bolshe_or_not == "меньше":
-                 predpolozenie = number + 1
-             number = random.randint(predpolozenie, predpolozenie2)
-             print("Хорошо. Теперь я думаю, что ваше число:", number)
-             vernost = ""
-             break
- except ValueError:
-     print("Вы пытались обмануть программу! :)")
-     predpolozenie, predpolozenie2 = 1, 100
-     number = random.randint(predpolozenie, predpolozenie2)
-     print("Я предпологаю, что вы загадали число:", number)
-     continue
+vernost = easygui.ynbox("Я предпологаю, что вы загадали число: " + str(number) + "\n\t \
+        Число верно?", choices=("[<F1>]да","[<F2>]нет"))
+while not vernost:
+    try:
+        count += 1
+        bolshe_or_not = easygui.buttonbox("Число больше или меньше загаданного?", choices=("больше","меньше"))
+        if bolshe_or_not == "больше":
+            predpolozenie2 = number - 1
+        elif bolshe_or_not == "меньше":
+            predpolozenie = number + 1
+        number = random.randint(predpolozenie, predpolozenie2)
+        vernost = easygui.ynbox("Хорошо. Теперь я думаю, что ваше число: " + str(number) + "\n\t \
+        Число верно?", choices=("[<F1>]да","[<F2>]нет"))
+    except ValueError:
+        easygui.msgbox("Вы пытались обмануть программу! :)")
+        predpolozenie, predpolozenie2 = 1, 100
+        number = random.randint(predpolozenie, predpolozenie2)
+        easygui.msgbox("Я предпологаю, что вы загадали число: " + str(number))
+        continue
 
 sklonenie()
 # выводим результат
-input("Я угадал число " + str(number) + " за " + count)
+easygui.msgbox("Я угадал число " + str(number) + " за " + count, image="heart.png")
